@@ -4,6 +4,8 @@
 #include "esphome/components/cc2500/cc2500.h"
 
 #include <cinttypes>
+#include <unistd.h>
+
 
 namespace esphome {
 namespace livingcolors1 {
@@ -12,15 +14,15 @@ static const char *TAG = "livingcolors1";
 
 void LivingColors1::dump_config() {
 	ESP_LOGCONFIG(TAG, "Living Colors 1st generation component:");
-//	if (this->command_repeats_.has_value())
-//		ESP_LOGCONFIG(TAG, "  Command repeats: %d", this->command_repeats_.value());
+	if (this->command_repeats_.has_value())
+		ESP_LOGCONFIG(TAG, "  Command repeats: %d", this->command_repeats_.value());
 }
 
 void LivingColors1::set_light(uint64_t address, Command command, uint8_t hue,
 		uint8_t saturation, uint8_t value) {
 	ESP_LOGV(TAG, "Setting light on address 0x%016" PRIX64 " to 0x%02X 0x%02X 0x%02X 0x%02X", address, (uint8_t) command, hue, saturation, value);
 
-//	for (int i = 0; i < this->command_repeats_.value_or(1); i++) {
+	for (int i = 0; i < this->command_repeats_.value_or(1); i++) {
 		uint8_t data[15];
 
 		// Packet length, 14 bytes
@@ -51,7 +53,9 @@ void LivingColors1::set_light(uint64_t address, Command command, uint8_t hue,
 		data[14] = value;
 
 		this->send_command(data, 15);
-//	}
+
+		esphome::delay(14);
+	}
 }
 
 }
